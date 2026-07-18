@@ -1,4 +1,4 @@
-<img src="docs/polycy-banner.png" alt="polycy-banner" width="500px" height="250px">
+![policy bot banner](./docs/polycy-banner.png)
 
 **polycy** is a Retrieval-Augmented Generation (RAG) tool designed to quickly sift through Public Service Legislative Acts (PS LAs) based on a user's prompt and provide highly tailored, accurate responses.
 

@@ -1,14 +1,24 @@
 import { json } from '@sveltejs/kit';
-import { GEMINI_API_KEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { GoogleGenAI } from '@google/genai';
 import type { RequestHandler } from './$types';
 import { getContextByKeyword } from './context';
 import { buildSystemInstruction, formatGeminiHistory } from './prompt';
 
-const ai = new GoogleGenAI({ apiKey: GEMINI_API_KEY });
+export const config = {
+	runtime: 'edge'
+};
 
 export const POST: RequestHandler = async ({ request }) => {
 	try {
+		const apiKey = env.GEMINI_API_KEY;
+		if (!apiKey) {
+			return json(
+				{ error: 'Server Configuration Error: GEMINI_API_KEY is not defined.' },
+				{ status: 500 }
+			);
+		}
+		const ai = new GoogleGenAI({ apiKey: apiKey });
 		const data = await request.json().catch(() => ({}));
 		const conversationHistory = data.messages;
 		if (!conversationHistory || !Array.isArray(conversationHistory)) {
@@ -29,9 +39,10 @@ export const POST: RequestHandler = async ({ request }) => {
 		});
 		const stream = new ReadableStream({
 			async start(controller) {
+				const encoder = new TextEncoder();
 				for await (const chunk of responseStream) {
 					if (chunk.text) {
-						controller.enqueue(chunk.text);
+						controller.enqueue(encoder.encode(chunk.text));
 					}
 				}
 				controller.close();

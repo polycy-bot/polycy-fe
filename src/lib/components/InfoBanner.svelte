@@ -2,6 +2,6 @@
 	let { children } = $props();
 </script>
 
-<div class="flex w-full bg-gbluelight-500 text-yellow-200 p-2 font-bold text-sm">
+<div class="w-full bg-gbluelight-500 p-2 text-sm font-bold text-yellow-200">
 	{@render children?.()}
 </div>
